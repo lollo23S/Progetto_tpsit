@@ -1,4 +1,3 @@
-//import java.util.Scanner;
 
 class Conto {
     private double contoBancario;
