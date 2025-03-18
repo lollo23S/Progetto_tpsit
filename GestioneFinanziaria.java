@@ -1,79 +1,137 @@
 import java.util.Scanner;
 
 public class GestioneFinanziaria {
-    private static Scanner tastiera = new Scanner(System.in);
-    private static Conto conto = new Conto(1000, 200);
-    
-    private static int menu() {
-        System.out.println("--- MENU ---");
-        System.out.println("1) Depositare soldi");
-        System.out.println("2) Prelevare soldi");
-        System.out.println("3) Investire soldi");
-        System.out.println("4) Andare avanti di n mesi");
-        System.out.println("5) Stato del conto");
-        System.out.println("6) Stato del portafoglio");
-        System.out.println("7) USCIRE");
-        return conversioneInt("Inserisci l'opzione: ");
+
+    static Scanner tastiera = new Scanner(System.in);
+
+    public static int menu() {
+        int scelta;
+        System.out.println("---------------------------MENU'---------------------------");
+        System.out.println("1)Depositare soldi");
+        System.out.println("2)Prelevare soldi");
+        System.out.println("3)Possibilità di investire soldi");
+        System.out.println("4)Andare avanti di n mesi");
+        System.out.println("5)Visualizzare lo stato del proprio conto");
+        System.out.println("6)Visualizzare stato proprio portafoglio");
+        System.out.println();
+        System.out.println("7)USCIRE \n");
+        System.out.print("Inserisci l'opzione desiderata: ");
+        scelta = conversioneInt(tastiera.nextLine());
+        while (scelta < 0 || scelta > 7) {
+            System.out.println("Opzione non disponibile");
+            System.out.print("Reinserisci: ");
+            scelta = conversioneInt(tastiera.nextLine());
+        }
+
+        return scelta;
     }
 
-    private static int conversioneInt(String messaggio) {
-        int valore = -1;
-        while (valore <= 0) {
+    public static int conversioneInt(String input) {
+        int toInt = -1;
+        boolean ok;
+        do {
+            ok = true;
             try {
-                System.out.print(messaggio);
-                valore = Integer.parseInt(tastiera.nextLine());
+                toInt = (int) Integer.parseInt(input);
+                if (toInt <= 0) {
+                    System.out.println("Il numero deve essere maggiore di 0");
+                    ok = false;
+                    System.out.print("Reinserisci: ");
+                    input = tastiera.nextLine();
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Formato non valido");
+                System.out.print("Reinserisci: ");
+                ok = false;
+                input = tastiera.nextLine();
             }
-        }
-        return valore;
+        } while (!ok);
+
+        return toInt;
     }
 
-    private static double conversioneDouble(String messaggio) {
-        double valore = -1;
-        while (valore <= 0) {
+    public static double deposita(double portafoglio) {
+        double saldo = conversioneDouble(tastiera.nextLine());
+
+        while (saldo > portafoglio) {
+            System.out.println("Saldo del portafoglio non sufficiente");
+            System.out.print("Inserisci quanto vuoi depositare nel conto Bancario: ");
+            saldo = conversioneDouble(tastiera.nextLine());
+        }
+
+        return saldo;
+    }
+
+    public static double preleva(double contoBancario) {
+        double saldo = conversioneDouble(tastiera.nextLine());
+
+        while (saldo > contoBancario) {
+            System.out.println("Saldo del conto bancario non sufficiente");
+            System.out.print("Inserisci quanto vuoi prelevare dal conto Bancario: ");
+            saldo = conversioneDouble(tastiera.nextLine());
+        }
+
+        return saldo;
+    }
+
+    public static int menuPerDurata() {
+        int scelta;
+        System.out.println("1)Investimenti di breve durata");
+        System.out.println("2)Investimenti di media durata");
+        System.out.println("3)Investimenti di lunga durata");
+        System.out.print("Inserisci l'opzione desiderata: ");
+        scelta = conversioneInt(tastiera.nextLine());
+        while (scelta > 3) {
+            System.out.println("Opzione non disponibile");
+            System.out.print("Reinserisci: ");
+            scelta = conversioneInt(tastiera.nextLine());
+        }
+
+        return scelta;
+    }
+
+    public static int menuPerRischio() {
+        int scelta;
+        System.out.println("1)Investimenti di basso rischio");
+        System.out.println("2)Investimenti di medio rischio");
+        System.out.println("3)Investimenti di alto rischio");
+        System.out.print("Inserisci l'opzione desiderata: ");
+        scelta = conversioneInt(tastiera.nextLine());
+        while (scelta > 3) {
+            System.out.println("Opzione non disponibile");
+            System.out.print("Reinserisci: ");
+            scelta = conversioneInt(tastiera.nextLine());
+        }
+
+        return scelta;
+    }
+
+    public static double conversioneDouble(String input) {
+        double toDouble = -1;
+        boolean ok;
+        do {
+            ok = true;
             try {
-                System.out.print(messaggio);
-                valore = Double.parseDouble(tastiera.nextLine());
+                toDouble = (double) Double.parseDouble(input);
+                if (toDouble <= 0) {
+                    System.out.println("Il numero deve essere maggiore di 0");
+                    ok = false;
+                    System.out.print("Reinserisci: ");
+                    input = tastiera.nextLine();
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Formato non valido");
+                System.out.print("Reinserisci: ");
+                ok = false;
+                input = tastiera.nextLine();
             }
-        }
-        return valore;
+        } while (!ok);
+
+        return toDouble;
     }
 
     public static void main(String[] args) {
-        int scelta;
-        do {
-            scelta = menu();
-            switch (scelta) {
-                case 1 -> {
-                    double saldo = conversioneDouble("Quanto vuoi depositare? ");
-                    conto.deposita(saldo);
-                }
-                case 2 -> {
-                    double saldo = conversioneDouble("Quanto vuoi prelevare? ");
-                    conto.preleva(saldo);
-                }
-                case 3 -> {
-                    if (conto.getContoBancario() > 0) {
-                        double soldiDaInvestire = conversioneDouble("Quantità da investire: ");
-                        conto.preleva(soldiDaInvestire);
-                        double guadagno = Investimento.calcolaGuadagno(100, soldiDaInvestire);
-                        conto.deposita(guadagno);
-                        System.out.println("Hai guadagnato: " + guadagno);
-                    } else {
-                        System.out.println("Saldo insufficiente!");
-                    }
-                }
-                case 4 -> {
-                    int mesi = conversioneInt("Di quanti mesi vuoi avanzare? ");
-                    conto.aggiornaSaldo(mesi);
-                }
-                case 5 -> System.out.println("Conto in banca: " + conto.getContoBancario());
-                case 6 -> System.out.println("Portafoglio: " + conto.getPortafoglio());
-                case 7 -> System.out.println("Grazie per aver usato il programma!");
-            }
-        } while (scelta != 7);
+        // Implementazione principale della gestione finanziaria
     }
 }
+    
